@@ -14,8 +14,8 @@ spec:
         app: back-despachos
     spec:
       containers:  
-      - name: back-despachos# REEMPLAZA "TU_USUARIO_DOCKER" POR TU USUARIO REAL
-        image: TU_USUARIO_DOCKER/back-despachos:latest
+      - name: back-despachos
+        image: felipesalazar24/back-despachos:latest
         env:
           - name: SPRING_DATASOURCE_URL
             value: "jdbc:mysql://mysql-service:3306/tienda_db"
