@@ -13,19 +13,18 @@ spec:
       labels:
         app: back-ventas
     spec:
-      containers:
-        
-name: back-ventas
+      containers:       
+      - name: back-ventas
         image: felipesalazar24/back-ventas:latest
         env:
-name: SPRING_DATASOURCE_URL
-          value: "jdbc:mysql://mysql-service:3306/tienda_db"
-name: SPRING_DATASOURCE_USERNAME
-        value: "root"
-name: SPRING_DATASOURCE_PASSWORD
-      value: "root123"
-  ports:
-containerPort: 8082
+          - name: SPRING_DATASOURCE_URL
+            value: "jdbc:mysql://mysql-service:3306/tienda_db"
+          - name: SPRING_DATASOURCE_USERNAME
+            value: "root"
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: "root123"
+        ports:
+          - containerPort: 8082
 ---
 apiVersion: v1
 kind: Service

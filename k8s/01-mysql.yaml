@@ -13,17 +13,16 @@ spec:
       labels:
         app: mysql
     spec:
-      containers:
-        
-name: mysql
-        image: mysql:8.0
-        env:
-name: MYSQL_ROOT_PASSWORD
-          value: "root123"
-name: MYSQL_DATABASE
-        value: "tienda_db"
-    ports:
-containerPort: 3306
+      containers:  
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "root123"
+            - name: MYSQL_DATABASE
+              value: "tienda_db"
+          ports:
+            - containerPort: 3306
 ---
 apiVersion: v1
 kind: Service
