@@ -1,40 +1,27 @@
-# 🚀 Sistema de Ventas y Despachos - Orquestación en AWS EKS
+# 🚀 Proyecto DevOps - Sistema de Ventas y Despachos en AWS EKS
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white" />
-  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />
-  <img src="https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
-  <img src="https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white" />
-  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" />
+  <img src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white" />
+  <img src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white" />
+  <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white" />
+  <img src="https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white" />
 </div>
 
 <br>
 
-Este repositorio contiene el código fuente, la infraestructura como código (IaC) y los manifiestos de Kubernetes para desplegar un sistema transaccional de microservicios. Todo el ciclo de vida, desde la compilación hasta el despliegue en la nube, está automatizado mediante **GitHub Actions** hacia un clúster de **Amazon EKS (Elastic Kubernetes Service)**.
+Este repositorio contiene la infraestructura como código (IaC), los manifiestos de despliegue y el pipeline de Integración y Entrega Continua (CI/CD) para una arquitectura de microservicios alojada en **Amazon Elastic Kubernetes Service (EKS)**.
 
----
+## 🏗️ Arquitectura del Proyecto
 
-## 📋 Tabla de Contenidos
-1. [Descripción General](#-descripción-general)
-2. [Arquitectura del Sistema](#-arquitectura-del-sistema)
-3. [Estructura del Proyecto](#-estructura-del-proyecto)
-4. [Flujo CI/CD (Pipeline)](#-flujo-cicd-pipeline)
-5. [Despliegue e Infraestructura (AWS Academy)](#-despliegue-e-infraestructura-aws-academy)
-6. [Instrucciones de Uso](#-instrucciones-de-uso)
-7. [Limpieza de Recursos](#-limpieza-de-recursos)
+El sistema está compuesto por cuatro componentes principales que se ejecutan de manera aislada dentro del Namespace `tienda` en Kubernetes:
 
----
+1. **Frontend (Despacho Dashboard):** Interfaz gráfica expuesta a internet a través de un servicio `LoadBalancer` de AWS.
+2. **Microservicio Back-Ventas:** API desarrollada en Spring Boot (Java) encargada de la lógica de ventas.
+3. **Microservicio Back-Despachos:** API desarrollada en Spring Boot encargada de gestionar la logística y los envíos.
+4. **Base de Datos (MySQL):** Motor relacional MySQL 8.0 aislado del exterior, accesible exclusivamente por los microservicios a través de resolución DNS interna en el clúster.
 
-## 📖 Descripción General
-El sistema simula el ecosistema backend de una tienda en línea. Está dividido en microservicios independientes que interactúan entre sí dentro de un entorno aislado (Namespace) en Kubernetes. Proporciona una interfaz gráfica (Despacho Dashboard) accesible públicamente que consume las APIs internas para la gestión de compras y despachos logísticos.
-
----
-
-## 🏛️ Arquitectura del Sistema
-
-A continuación se detalla cómo interactúan los componentes dentro del clúster y cómo viaja el código desde este repositorio hasta AWS.
+### Diagrama de Flujo e Infraestructura
 
 ```mermaid
 flowchart TD
@@ -82,7 +69,7 @@ flowchart TD
     Hub -.-> Despachos
     Deploy -.-> Namespace
 
-    %% 3. DEFINICION DE COLORES
+    %% 3. DEFINICION DE COLORES (Clases CSS)
     classDef user fill:#8e44ad,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:10,ry:10;
     classDef github fill:#24292e,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:5,ry:5;
     classDef aws fill:#ff9900,stroke:#232f3e,stroke-width:2px,color:#232f3e,font-weight:bold,rx:5,ry:5;
@@ -91,7 +78,7 @@ flowchart TD
     classDef db fill:#00758f,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:10,ry:10;
     classDef docker fill:#0db7ed,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:10,ry:10;
 
-    %% 4. ASIGNACION DE COLORES
+    %% 4. ASIGNACION DE COLORES A LOS NODOS
     class U user;
     class Hub docker;
     class Code,Build,Img,Deploy github;
@@ -100,7 +87,7 @@ flowchart TD
     class Ventas,Despachos spring;
     class MySQL db;
 
-    %% 5. ESTILOS DE FONDOS
+    %% 5. ESTILOS DE FONDOS PARA LOS CUADROS (Subgrafos)
     style CI_CD fill:#f6f8fa,stroke:#d1d5da,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10;
     style AWS fill:#f8f9fa,stroke:#ff9900,stroke-width:2px,rx:10,ry:10;
     style Namespace fill:#e6f0fa,stroke:#326ce5,stroke-width:2px,rx:10,ry:10;
