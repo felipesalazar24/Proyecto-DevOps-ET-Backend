@@ -1,12 +1,12 @@
 # 🚀 Proyecto DevOps - Sistema de Ventas y Despachos en AWS EKS
 
 <div align="center">
-  <img src="https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white" />
-  <img src="https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white" />
-  <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white" />
-  <img src="https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white" />
-  <img src="https://img.shields.io/badge/mysql-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white" />
+  <img src="[https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)" />
+  <img src="[https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)" />
+  <img src="[https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)" />
+  <img src="[https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)" />
+  <img src="[https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)" />
+  <img src="[https://img.shields.io/badge/mysql-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white](https://img.shields.io/badge/mysql-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)" />
 </div>
 
 <br>
@@ -57,13 +57,11 @@ La organización del proyecto sigue las mejores prácticas de modularización:
 
 ## ⚙️ Pipeline CI/CD (GitHub Actions)
 
-- El proyecto cuenta con un flujo de trabajo totalmente automatizado. Cada vez que se realiza un push a la rama main, se activan los siguientes Jobs:
+El proyecto cuenta con un flujo de trabajo totalmente automatizado. Cada vez que se realiza un push a la rama `main`, se activan los siguientes Jobs:
 
-- Build & Test: Compila el código fuente de Java utilizando Maven.
-
-- Dockerization: Construye las imágenes Docker para el frontend y los backends, publicándolas en Docker Hub con la etiqueta latest.
-
-- Deploy to AWS: Se autentica en la cuenta de AWS Academy, actualiza el contexto de kubeconfig y aplica automáticamente los archivos .yaml de la carpeta k8s/ en el clúster EKS.
+* **Build & Test:** Compila el código fuente de Java utilizando Maven.
+* **Dockerization:** Construye las imágenes Docker para el frontend y los backends, publicándolas en Docker Hub con la etiqueta `latest`.
+* **Deploy to AWS:** Se autentica en la cuenta de AWS Academy, actualiza el contexto de `kubeconfig` y aplica automáticamente los archivos `.yaml` de la carpeta `k8s/` en el clúster EKS.
 
 ---
 
@@ -147,3 +145,50 @@ flowchart LR
     style CI fill:#f6f8fa,stroke:#d1d5da,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10;
     style AWS fill:#f8f9fa,stroke:#ff9900,stroke-width:2px,rx:10,ry:10;
     style K8S fill:#e6f0fa,stroke:#326ce5,stroke-width:2px,rx:10,ry:10;
+```
+
+---
+
+## 🚀 Guía de Despliegue
+
+### 1. Configuración de Secretos en GitHub
+Para que el pipeline de automatización pueda comunicarse con AWS y EKS, debes ir a la pestaña **Settings > Secrets and variables > Actions** de tu repositorio y configurar los siguientes *Repository secrets*:
+
+* `AWS_ACCESS_KEY_ID`
+* `AWS_SECRET_ACCESS_KEY`
+* `AWS_SESSION_TOKEN`
+> ⚠️ **Importante (Entornos Académicos):** Si utilizas AWS Academy / Learner Lab, recuerda que el `AWS_SESSION_TOKEN` tiene un tiempo de expiración corto. Debes actualizar este secreto antes de ejecutar un nuevo despliegue.
+
+### 2. Aprovisionamiento del Clúster EKS
+Abre la terminal de **AWS CloudShell** y levanta la infraestructura utilizando el archivo proporcionado. Este archivo está preconfigurado para evitar errores de permisos utilizando el `LabRole` por defecto:
+
+```bash
+eksctl create cluster -f cluster.yaml
+```
+
+### 3. Ejecución del Pipeline (CI/CD)
+Una vez que el clúster esté activo en AWS, realiza un `git push` a la rama `main`. Esto desencadenará automáticamente el flujo de GitHub Actions.
+
+### 4. Acceso a la Aplicación
+Cuando el pipeline termine exitosamente, obtén la dirección pública de tu frontend con el siguiente comando en AWS CloudShell:
+
+```bash
+kubectl get svc frontend-service -n tienda
+```
+Copia el valor de la columna `EXTERNAL-IP` y pégalo en tu navegador.
+
+---
+
+## 🧹 Limpieza de Recursos (Destrucción)
+
+Para evitar cobros innecesarios o el consumo excesivo de créditos en tu entorno de AWS, es crítico destruir la infraestructura cuando termines de utilizarla:
+
+```bash
+kubectl delete namespace tienda
+eksctl delete cluster -f cluster.yaml
+```
+
+---
+<div align="center">
+  <i>Desarrollado como caso práctico para la asignatura de Arquitectura de Sistemas Cloud y DevOps - Duoc UC.</i>
+</div>
