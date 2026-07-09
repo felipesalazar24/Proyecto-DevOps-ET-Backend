@@ -1,32 +1,21 @@
-# ETAPA DE CONSTRUCCIÓN
-FROM eclipse-temurin:25-jdk AS build
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 
-# Copiar wrappers y configuración
-COPY gradlew .
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-RUN tr -d '\r' < gradlew > gradlew.tmp && mv gradlew.tmp gradlew
-RUN chmod +x gradlew
-
-# Copiar el código fuente
 COPY src src
 
-# COMPILACIÓN:
-RUN ./gradlew clean build -x test \
-    -Porg.gradle.java.installations.auto-download=false \
-    -Dorg.gradle.java.home=$JAVA_HOME
+RUN mvn clean package -DskipTests
 
-# ETAPA DE EJECUCIÓN
-FROM eclipse-temurin:25-jre
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8082
 
 ENV SERVER_PORT=8082
 
+# Comando de ejecución
 ENTRYPOINT ["java", "-jar", "app.jar"]

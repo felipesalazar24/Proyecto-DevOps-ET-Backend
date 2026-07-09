@@ -15,7 +15,7 @@ services:
     build: ./backend/backend-Ventas_SpringBoot/SpringBoot-API-REST
     container_name: mi_backend
     ports:
-      - "8081:8080"
+      - "8082:8080"
     environment:
       DB_URL: jdbc:postgresql://db_ventas:5432/db_ventas
       DB_USER: admin
@@ -38,7 +38,7 @@ services:
     build: ./backend/back-Despachos_SpringBoot/SpringBoot-API-REST-DESPACHO
     container_name: mi_backend
     ports:
-      - "8082:8080"
+      - "8081:8080"
     environment:
       DB_URL: jdbc:postgresql://db_despachos:5432/nombre_bd
       DB_USER: admin
