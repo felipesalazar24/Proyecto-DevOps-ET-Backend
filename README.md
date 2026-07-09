@@ -14,62 +14,73 @@ Este repositorio contiene la infraestructura como código (IaC), los manifiestos
 
 ## 🏗️ Arquitectura del Proyecto
 
-El sistema está compuesto por cuatro componentes principales que se ejecutan dentro del Namespace `tienda` en Kubernetes:
+El sistema está compuesto por cuatro componentes principales que se ejecutan de manera aislada dentro del Namespace `tienda` en Kubernetes:
 
-1. **Frontend (Despacho Dashboard):** Interfaz gráfica expuesta a internet a través de un `LoadBalancer` de AWS.
+1. **Frontend (Despacho Dashboard):** Interfaz gráfica expuesta a internet a través de un servicio `LoadBalancer` de AWS.
 2. **Microservicio Back-Ventas:** API desarrollada en Spring Boot (Java) encargada de la lógica de ventas.
-3. **Microservicio Back-Despachos:** API desarrollada en Spring Boot encargada de gestionar los envíos.
-4. **Base de Datos (MySQL):** Motor relacional MySQL 8.0 aislado del exterior, accesible solo por los microservicios a través del clúster interno.
+3. **Microservicio Back-Despachos:** API desarrollada en Spring Boot encargada de gestionar la logística y los envíos.
+4. **Base de Datos (MySQL):** Motor relacional MySQL 8.0 aislado del exterior, accesible exclusivamente por los microservicios a través de resolución DNS interna en el clúster.
 
 ### Diagrama de Flujo e Infraestructura
 
 ```mermaid
-flowchart TD
-    %% 1. DEFINICION DE ACTORES Y COMPONENTES
-    U["Usuario Final"]
-    Hub["Docker Hub"]
+flowchart LR
+    %% ACTORES EXTERNOS
+    User(["👤 Usuario Final"])
+    Hub[("🐳 Docker Hub")]
 
-    subgraph CI_CD ["GitHub Actions (CI/CD Pipeline)"]
-        direction LR
-        Code["Codigo (Push)"]
-        Build["Maven Build & Test"]
-        Img["Docker Build & Push"]
-        Deploy["EKS Deploy"]
+    %% PIPELINE CI/CD
+    subgraph CI ["GitHub Actions (Pipeline CI/CD)"]
+        direction TB
+        Code["📝 Código (Push)"]
+        Build["⚙️ Maven Build"]
+        Img["📦 Docker Build"]
+        Deploy["🚀 Deploy EKS"]
 
-        Code ==> Build ==> Img ==> Deploy
+        Code --> Build --> Img --> Deploy
     end
 
-    subgraph AWS ["Amazon Web Services (EKS Cluster)"]
+    %% INFRAESTRUCTURA AWS
+    subgraph AWS ["☁️ AWS EKS Cluster"]
         direction TB
-        ELB["Elastic Load Balancer (Puerto 80)"]
+        ELB["🌐 Elastic Load Balancer (Puerto 80)"]
 
-        subgraph Namespace ["Kubernetes Namespace: tienda"]
+        subgraph K8S ["Namespace: tienda"]
             direction TB
-            Front["tienda-frontend (Pod: 80)"]
-            Ventas["back-ventas (Spring Boot: 8080)"]
-            Despachos["back-despachos (Spring Boot: 8080)"]
-            SVC["mysql-service (ClusterIP: 3306)"]
-            MySQL[("mysql-db (Base de Datos)")]
+            Front["🖥️ frontend (Pod: 80)"]
+            Ventas["🛒 back-ventas (8080)"]
+            Despachos["🚚 back-despachos (8080)"]
+            SVC["🔌 mysql-service"]
+            DB[("🗄️ mysql-db (3306)")]
 
             Front --> Ventas
             Front --> Despachos
             Ventas --> SVC
             Despachos --> SVC
-            SVC === MySQL
+            SVC ==> DB
         end
+        ELB ===> Front
     end
 
-    %% 2. CONEXIONES GLOBALES
-    U === ELB
-    ELB === Front
+    %% RELACIONES Y FLUJOS
+    User ===>|Acceso HTTP| ELB
+    Img -.->|Publica Imagen| Hub
+    Deploy -.->|kubectl apply| K8S
     
-    Img -.-> Hub
-    Hub -.-> Front
-    Hub -.-> Ventas
-    Hub -.-> Despachos
-    Deploy -.-> Namespace
+    Hub -.->|Descarga Imagen| Front
+    Hub -.->|Descarga Imagen| Ventas
+    Hub -.->|Descarga Imagen| Despachos
 
-    %% 3. DEFINICION DE COLORES (Clases CSS)
+    %% ASIGNACION DE ESTILOS
+    class User user;
+    class Hub docker;
+    class Code,Build,Img,Deploy github;
+    class ELB aws;
+    class Front,SVC k8s;
+    class Ventas,Despachos spring;
+    class DB db;
+
+    %% DEFINICION DE COLORES
     classDef user fill:#8e44ad,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:10,ry:10;
     classDef github fill:#24292e,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:5,ry:5;
     classDef aws fill:#ff9900,stroke:#232f3e,stroke-width:2px,color:#232f3e,font-weight:bold,rx:5,ry:5;
@@ -78,16 +89,6 @@ flowchart TD
     classDef db fill:#00758f,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:10,ry:10;
     classDef docker fill:#0db7ed,stroke:#fff,stroke-width:2px,color:#fff,font-weight:bold,rx:10,ry:10;
 
-    %% 4. ASIGNACION DE COLORES A LOS NODOS
-    class U user;
-    class Hub docker;
-    class Code,Build,Img,Deploy github;
-    class ELB aws;
-    class Front,SVC k8s;
-    class Ventas,Despachos spring;
-    class MySQL db;
-
-    %% 5. ESTILOS DE FONDOS PARA LOS CUADROS (Subgrafos)
-    style CI_CD fill:#f6f8fa,stroke:#d1d5da,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10;
+    style CI fill:#f6f8fa,stroke:#d1d5da,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10;
     style AWS fill:#f8f9fa,stroke:#ff9900,stroke-width:2px,rx:10,ry:10;
-    style Namespace fill:#e6f0fa,stroke:#326ce5,stroke-width:2px,rx:10,ry:10;
+    style K8S fill:#e6f0fa,stroke:#326ce5,stroke-width:2px,rx:10,ry:10;
