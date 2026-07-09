@@ -14,12 +14,12 @@ Este repositorio contiene la infraestructura como código (IaC), los manifiestos
 
 ## 🏗️ Arquitectura del Proyecto
 
-El sistema está compuesto por cuatro componentes principales que se ejecutan de manera aislada dentro del Namespace `tienda` en Kubernetes:
+El sistema está compuesto por cuatro componentes principales que se ejecutan dentro del Namespace `tienda` en Kubernetes:
 
-1. **Frontend (Despacho Dashboard):** Interfaz gráfica expuesta a internet a través de un servicio `LoadBalancer` de AWS.
+1. **Frontend (Despacho Dashboard):** Interfaz gráfica expuesta a internet a través de un `LoadBalancer` de AWS.
 2. **Microservicio Back-Ventas:** API desarrollada en Spring Boot (Java) encargada de la lógica de ventas.
-3. **Microservicio Back-Despachos:** API desarrollada en Spring Boot encargada de gestionar la logística y los envíos.
-4. **Base de Datos (MySQL):** Motor relacional MySQL 8.0 aislado del exterior, accesible exclusivamente por los microservicios a través de resolución DNS interna en el clúster.
+3. **Microservicio Back-Despachos:** API desarrollada en Spring Boot encargada de gestionar los envíos.
+4. **Base de Datos (MySQL):** Motor relacional MySQL 8.0 aislado del exterior, accesible solo por los microservicios a través del clúster interno.
 
 ### Diagrama de Flujo e Infraestructura
 
@@ -91,15 +91,3 @@ flowchart TD
     style CI_CD fill:#f6f8fa,stroke:#d1d5da,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10;
     style AWS fill:#f8f9fa,stroke:#ff9900,stroke-width:2px,rx:10,ry:10;
     style Namespace fill:#e6f0fa,stroke:#326ce5,stroke-width:2px,rx:10,ry:10;
-
-    %% 6. ESTRUCTURA DEL PROYECTO (GitHub)
-    ├── .github/
-│   └── workflows/
-│       └── deploy.yml          # Configuración del Pipeline CI/CD automatizado
-├── k8s/                        # Manifiestos de despliegue de Kubernetes
-│   ├── 01-mysql.yaml           # Despliegue y servicio de la base de datos
-│   ├── 02-back-ventas.yaml     # Despliegue de la API de Ventas
-│   ├── 03-back-despachos.yaml  # Despliegue de la API de Despachos
-│   └── 04-frontend.yaml        # Despliegue de la web y LoadBalancer
-├── cluster.yaml                # Archivo IaC para levantar el clúster con eksctl
-└── README.md
