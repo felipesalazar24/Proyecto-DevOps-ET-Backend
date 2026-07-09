@@ -36,6 +36,33 @@ Este repositorio contiene el código fuente, la infraestructura como código (Ia
 
 ---
 
+## 📂 Estructura del repositorio
+
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          # Pipeline de GitHub Actions
+├── k8s/                        # Manifiestos de Kubernetes (.yaml)
+│   ├── 01-mysql.yaml           # Deployment, Secret y Service de Base de Datos
+│   ├── 02-back-ventas.yaml     # Deployment y Service (Backend Ventas)
+│   ├── 03-back-despachos.yaml  # Deployment y Service (Backend Despachos)
+│   └── 04-frontend.yaml        # Deployment y LoadBalancer (Frontend)
+├── cluster.yaml                # Archivo IaC para aprovisionamiento del clúster
+└── README.md                   # Documentación general
+
+---
+
+## ⚙️ Pipeline CI/CD (GitHub Actions)
+
+El proyecto cuenta con un flujo de trabajo totalmente automatizado. Cada vez que se realiza un push a la rama main, se activan los siguientes Jobs:
+
+Build & Test: Compila el código fuente de Java utilizando Maven.
+
+Dockerization: Construye las imágenes Docker para el frontend y los backends, publicándolas en Docker Hub con la etiqueta latest.
+
+Deploy to AWS: Se autentica en la cuenta de AWS Academy, actualiza el contexto de kubeconfig y aplica automáticamente los archivos .yaml de la carpeta k8s/ en el clúster EKS.
+
+---
+
 ## 🏗️ Arquitectura del Proyecto
 
 El sistema se ejecuta dentro del Namespace `tienda` en Kubernetes, dividiéndose en los siguientes componentes:
