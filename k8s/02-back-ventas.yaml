@@ -34,8 +34,7 @@ metadata:
 spec:
   selector:
     app: back-ventas
-  ports:
-    
-protocol: TCP
-    port: 8082
-    targetPort: 8082
+  ports:   
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
