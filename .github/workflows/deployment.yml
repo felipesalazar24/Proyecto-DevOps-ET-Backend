@@ -28,7 +28,7 @@ jobs:
           cache: 'maven'
 
       - name: Build back-Despachos
-        working-directory: backend/back-Despachos_SpringBoot/SpringBoot-API-REST-DESPACHO
+        working-directory: backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
         run: mvn clean package -B -DskipTests
 
       - name: Build back-Ventas
@@ -56,7 +56,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest
 
       - name: Construir y Subir imagen Back-Despachos
-        working-directory: backend/back-Despachos_SpringBoot/SpringBoot-API-REST-DESPACHO
+        working-directory: backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest
