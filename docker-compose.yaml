@@ -1,0 +1,61 @@
+services:
+  # Base de datos
+  db_ventas:
+    image: postgres:15-alpine
+    container_name: db_ventas
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: nombre_bd
+    volumes:
+      - db_ventas_data:/var/lib/postgresql/data 
+
+  # Backend
+  ventas:
+    build: ./backend/backend-Ventas_SpringBoot/SpringBoot-API-REST
+    container_name: mi_backend
+    ports:
+      - "8081:8080"
+    environment:
+      DB_URL: jdbc:postgresql://db_ventas:5432/db_ventas
+      DB_USER: admin
+      DB_PASS: admin123
+    depends_on:
+      - db_ventas
+
+  db_despachos:
+    image: postgres:15-alpine
+    container_name: db_despachos
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: nombre_bd
+    volumes:
+      - db_despachos_data:/var/lib/postgresql/data 
+
+  # Backend
+  despachos:
+    build: ./backend/back-Despachos_SpringBoot/SpringBoot-API-REST-DESPACHO
+    container_name: mi_backend
+    ports:
+      - "8082:8080"
+    environment:
+      DB_URL: jdbc:postgresql://db_despachos:5432/nombre_bd
+      DB_USER: admin
+      DB_PASS: admin123
+    depends_on:
+      - db_despachos
+
+  # Frontend
+  frontend:
+    build: ./front_despacho
+    container_name: mi_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - ventas
+      - despachos
+
+volumes:
+  db_ventas_data:
+  db_despachos_data:
