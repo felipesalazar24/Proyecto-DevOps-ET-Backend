@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      
+
   pull_request:
     branches:
       - main
@@ -30,11 +30,11 @@ jobs:
           cache: 'maven'
 
       - name: Build y Test back-Despachos
-        working-directory: ./back-Despachos_SpringBoot
+        working-directory: ./backend/back-Despachos_SpringBoot/SpringBoot-API-REST-DESPACHO
         run: mvn clean package -B -DskipTests # Quita -DskipTests si tienes pruebas configuradas
 
       - name: Build y Test back-Ventas
-        working-directory: ./back-Ventas_SpringBoot
+        working-directory: ./backend/back-Ventas_SpringBoot/SpringBoot-API-REST-VENTAS
         run: mvn clean package -B -DskipTests
 
       # Si el front usa Node.js, aquí iría la configuración de npm
@@ -67,7 +67,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest
 
       - name: Construir y Subir imagen Back-Despachos
-        working-directory: ./back-Despachos_SpringBoot
+        working-directory: ./backend/back-Despachos_SpringBoot/SpringBoot-API-REST-DESPACHO
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest
