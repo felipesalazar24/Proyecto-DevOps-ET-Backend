@@ -38,19 +38,17 @@ Este repositorio contiene el código fuente, la infraestructura como código (Ia
 
 ## 📂 Estructura del Repositorio
 
-La organización del proyecto sigue las mejores prácticas de modularización:
+El proyecto contiene tanto el código fuente de las aplicaciones como la infraestructura y los manifiestos de despliegue, organizados de la siguiente manera:
 
 ```text
 ├── .github/
-│   └── workflows/
-│       └── deploy.yml          # Pipeline de GitHub Actions
-├── k8s/                        # Manifiestos de Kubernetes (.yaml)
-│   ├── 01-mysql.yaml           # Deployment, Secret y Service de BD
-│   ├── 02-back-ventas.yaml     # Deployment y Service (Backend Ventas)
-│   ├── 03-back-despachos.yaml  # Deployment y Service (Backend Despachos)
-│   └── 04-frontend.yaml        # Deployment y LoadBalancer (Frontend)
-├── cluster.yaml                # Archivo IaC para aprovisionamiento del clúster
-└── README.md                   # Documentación general
+│   └── workflows/          # Pipeline de automatización CI/CD (GitHub Actions)
+├── .vscode/                # Configuraciones locales del entorno de desarrollo
+├── backend/                # Código fuente de los microservicios (Spring Boot / Java)
+├── front_despacho/         # Código fuente del dashboard y configuraciones (Nginx)
+├── k8s/                    # Manifiestos de despliegue para Kubernetes (.yaml)
+├── docker-compose.yaml     # Archivo para levantar el entorno localmente con Docker
+└── README.md               # Documentación general del proyecto
 ```
 
 ---
