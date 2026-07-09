@@ -1,25 +1,24 @@
 ## Dockerfile for front_despacho
 
-# Stage 1: Builder
+# Stage 1: Build the Vite app
 FROM node:20-alpine AS builder
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm install
+
 COPY . .
 RUN npm run build
 
-# Stage 2: Runtime
-FROM node:20-alpine
-WORKDIR /app
-ENV NODE_ENV=production
-COPY package*.json ./
-RUN npm install --only=production
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
+# Stage 2: Serve the static build with Nginx
+FROM nginx:1.27-alpine
 
-EXPOSE 3000
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+EXPOSE 80
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000', (res) => { if (res.statusCode !== 200) throw new Error(res.statusCode) })"
+  CMD wget -qO- http://localhost/ >/dev/null || exit 1
 
-CMD ["npm", "start"]
+CMD ["nginx", "-g", "daemon off;"]
