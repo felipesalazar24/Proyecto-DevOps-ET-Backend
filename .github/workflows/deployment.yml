@@ -4,13 +4,11 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
 
 env:
-  # Variables de entorno generales
   DOCKER_USER: ${{ secrets.DOCKER_USERNAME }}
   AWS_REGION: us-east-1
 
@@ -22,29 +20,20 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v3
 
-      - name: Configurar Java 17 (Para Spring Boot)
+      - name: Configurar Java 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build y Test back-Despachos
-        working-directory: ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
-        run: mvn clean package -B -DskipTests # Quita -DskipTests si tienes pruebas configuradas
-
-      - name: Build y Test back-Ventas
-        working-directory: ./backend/back-Ventas_SpringBoot/Springboot-API-REST
+      - name: Build back-Despachos
+        working-directory: backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
         run: mvn clean package -B -DskipTests
 
-      # Si el front usa Node.js, aquí iría la configuración de npm
-      # - name: Configurar Node.js (Para el Front)
-      #   uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '18'
-      # - name: Build front_despacho
-      #   working-directory: ./front_despacho
-      #   run: npm install && npm run build
+      - name: Build back-Ventas
+        working-directory: backend/back-Ventas_SpringBoot/Springboot-API-REST
+        run: mvn clean package -B -DskipTests
 
   build-and-push-docker:
     name: Build & Push Docker Images
@@ -61,25 +50,25 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Construir y Subir imagen Front-End
-        working-directory: ./front_despacho
+        working-directory: front_despacho
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/front-despacho:latest
 
       - name: Construir y Subir imagen Back-Despachos
-        working-directory: ./backend/back-Despachos_SpringBoot/SpringBoot-API-REST-DESPACHO
+        working-directory: backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest
 
       - name: Construir y Subir imagen Back-Ventas
-        working-directory: ./backend/back-Ventas_SpringBoot/Springboot-API-REST
+        working-directory: backend/back-Ventas_SpringBoot/Springboot-API-REST
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest
 
   deploy-to-aws:
-    name: Deploy to AWS (ECS/EKS)
+    name: Deploy to AWS EKS
     needs: build-and-push-docker
     runs-on: ubuntu-latest
     steps:
@@ -91,18 +80,16 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: us-east-1
+      
+      - name: Conectar con Cluster EKS
+        run: aws eks update-kubeconfig --name devopseks --region us-east-1
 
-      - name: Desplegar en AWS
+      - name: Aplicar Cambios en Kubernetes
         run: |
-          echo "Ejecutando despliegue automatizado..."
-          # AQUÍ DEBES COLOCAR EL COMANDO EXACTO SEGÚN TU ORQUESTADOR
-          
-          # Ejemplo si usas Amazon ECS:
-          # aws ecs update-service --cluster MiCluster --service front-service --force-new-deployment
-          # aws ecs update-service --cluster MiCluster --service back-ventas-service --force-new-deployment
-          # aws ecs update-service --cluster MiCluster --service back-despachos-service --force-new-deployment
-          
-          # Ejemplo si usas Amazon EKS (Kubernetes):
-          # kubectl apply -f k8s/
-          # kubectl rollout restart deployment/front-deployment
+          # Asegúrate de tener tus archivos .yaml en la carpeta ./k8s/
+          kubectl apply -f ./k8s/
+          kubectl rollout restart deployment tienda-frontend -n tienda
+          kubectl rollout restart deployment back-ventas -n tienda
+          kubectl rollout restart deployment back-despachos -n tienda
