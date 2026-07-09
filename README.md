@@ -53,13 +53,13 @@ Este repositorio contiene el código fuente, la infraestructura como código (Ia
 
 ## ⚙️ Pipeline CI/CD (GitHub Actions)
 
-El proyecto cuenta con un flujo de trabajo totalmente automatizado. Cada vez que se realiza un push a la rama main, se activan los siguientes Jobs:
+- El proyecto cuenta con un flujo de trabajo totalmente automatizado. Cada vez que se realiza un push a la rama main, se activan los siguientes Jobs:
 
-Build & Test: Compila el código fuente de Java utilizando Maven.
+- Build & Test: Compila el código fuente de Java utilizando Maven.
 
-Dockerization: Construye las imágenes Docker para el frontend y los backends, publicándolas en Docker Hub con la etiqueta latest.
+- Dockerization: Construye las imágenes Docker para el frontend y los backends, publicándolas en Docker Hub con la etiqueta latest.
 
-Deploy to AWS: Se autentica en la cuenta de AWS Academy, actualiza el contexto de kubeconfig y aplica automáticamente los archivos .yaml de la carpeta k8s/ en el clúster EKS.
+- Deploy to AWS: Se autentica en la cuenta de AWS Academy, actualiza el contexto de kubeconfig y aplica automáticamente los archivos .yaml de la carpeta k8s/ en el clúster EKS.
 
 ---
 
