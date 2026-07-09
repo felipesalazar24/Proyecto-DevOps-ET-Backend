@@ -30,11 +30,11 @@ jobs:
           cache: 'maven'
 
       - name: Build y Test back-Despachos
-        working-directory: ./backend/back-Despachos_SpringBoot/SpringBoot-API-REST-DESPACHO
+        working-directory: ./backend/back-Despachos_SpringBoot/Springboot-API-REST-DESPACHO
         run: mvn clean package -B -DskipTests # Quita -DskipTests si tienes pruebas configuradas
 
       - name: Build y Test back-Ventas
-        working-directory: ./backend/back-Ventas_SpringBoot/SpringBoot-API-REST-VENTAS
+        working-directory: ./backend/back-Ventas_SpringBoot/Springboot-API-REST
         run: mvn clean package -B -DskipTests
 
       # Si el front usa Node.js, aquí iría la configuración de npm
@@ -73,7 +73,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest
 
       - name: Construir y Subir imagen Back-Ventas
-        working-directory: ./back-Ventas_SpringBoot
+        working-directory: ./backend/back-Ventas_SpringBoot/Springboot-API-REST
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest
