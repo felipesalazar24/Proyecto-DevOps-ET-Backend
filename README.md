@@ -91,3 +91,15 @@ flowchart TD
     style CI_CD fill:#f6f8fa,stroke:#d1d5da,stroke-width:2px,stroke-dasharray: 5 5,rx:10,ry:10;
     style AWS fill:#f8f9fa,stroke:#ff9900,stroke-width:2px,rx:10,ry:10;
     style Namespace fill:#e6f0fa,stroke:#326ce5,stroke-width:2px,rx:10,ry:10;
+
+    %% 6. ESTRUCTURA DEL PROYECTO (GitHub)
+    ├── .github/
+│   └── workflows/
+│       └── deploy.yml          # Configuración del Pipeline CI/CD automatizado
+├── k8s/                        # Manifiestos de despliegue de Kubernetes
+│   ├── 01-mysql.yaml           # Despliegue y servicio de la base de datos
+│   ├── 02-back-ventas.yaml     # Despliegue de la API de Ventas
+│   ├── 03-back-despachos.yaml  # Despliegue de la API de Despachos
+│   └── 04-frontend.yaml        # Despliegue de la web y LoadBalancer
+├── cluster.yaml                # Archivo IaC para levantar el clúster con eksctl
+└── README.md
