@@ -6,20 +6,44 @@
   <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white" />
   <img src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white" />
   <img src="https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white" />
+  <img src="https://img.shields.io/badge/mysql-%234479A1.svg?style=for-the-badge&logo=mysql&logoColor=white" />
 </div>
 
 <br>
 
-Este repositorio contiene la infraestructura como código (IaC), los manifiestos de despliegue y el pipeline de Integración y Entrega Continua (CI/CD) para una arquitectura de microservicios alojada en **Amazon Elastic Kubernetes Service (EKS)**.
+Este repositorio contiene el código fuente, la infraestructura como código (IaC), los manifiestos de despliegue y el pipeline de Integración y Entrega Continua (CI/CD) para una arquitectura de microservicios alojada de forma escalable y resiliente en **Amazon Elastic Kubernetes Service (EKS)**.
+
+## 📌 Características Principales
+
+* **Despliegue Automatizado:** Integración nativa con GitHub Actions para compilar, empaquetar y desplegar sin intervención manual.
+* **Arquitectura Orientada a Microservicios:** Separación lógica de responsabilidades entre Ventas y Despachos para permitir escalabilidad independiente.
+* **Alta Disponibilidad:** Balanceo de carga gestionado por AWS (ELB) hacia los pods de Kubernetes.
+* **Seguridad y Aislamiento:** Base de datos restringida a la red interna del clúster (ClusterIP), inaccesible desde el exterior.
+
+---
+
+## 🛠️ Stack Tecnológico
+
+| Categoría | Tecnología Utilizada |
+| :--- | :--- |
+| **Backend** | Java 17, Spring Boot, Maven |
+| **Frontend** | HTML/CSS/JS (Empaquetado en Nginx/Apache) |
+| **Base de Datos** | MySQL 8.0 |
+| **Contenedores** | Docker, Docker Hub |
+| **Orquestación** | Kubernetes (K8s) |
+| **Infraestructura Cloud**| AWS (EKS, EC2, Elastic Load Balancer, CloudShell) |
+| **CI/CD** | GitHub Actions |
+
+---
 
 ## 🏗️ Arquitectura del Proyecto
 
-El sistema está compuesto por cuatro componentes principales que se ejecutan de manera aislada dentro del Namespace `tienda` en Kubernetes:
+El sistema se ejecuta dentro del Namespace `tienda` en Kubernetes, dividiéndose en los siguientes componentes:
 
 1. **Frontend (Despacho Dashboard):** Interfaz gráfica expuesta a internet a través de un servicio `LoadBalancer` de AWS.
-2. **Microservicio Back-Ventas:** API desarrollada en Spring Boot (Java) encargada de la lógica de ventas.
-3. **Microservicio Back-Despachos:** API desarrollada en Spring Boot encargada de gestionar la logística y los envíos.
-4. **Base de Datos (MySQL):** Motor relacional MySQL 8.0 aislado del exterior, accesible exclusivamente por los microservicios a través de resolución DNS interna en el clúster.
+2. **Microservicio Back-Ventas:** API encargada de procesar la lógica de ventas y carrito de compras.
+3. **Microservicio Back-Despachos:** API encargada de gestionar la logística, tracking y envíos.
+4. **Base de Datos (MySQL):** Motor relacional desplegado internamente, accesible exclusivamente por los microservicios mediante resolución DNS de Kubernetes.
 
 ### Diagrama de Flujo e Infraestructura
 
